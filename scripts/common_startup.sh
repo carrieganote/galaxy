@@ -79,7 +79,7 @@ if [ $SET_VENV -eq 1 -a $CREATE_VENV -eq 1 ]; then
         # Ensure Python is a supported version before creating .venv
         python ./scripts/check_python.py || exit 1
         if command -v virtualenv >/dev/null; then
-            virtualenv "$GALAXY_VIRTUAL_ENV"
+            virtualenv -p "$(command -v python)" "$GALAXY_VIRTUAL_ENV"
         else
             vvers=13.1.2
             vurl="https://pypi.python.org/packages/source/v/virtualenv/virtualenv-${vvers}.tar.gz"
@@ -100,7 +100,7 @@ if [ $SET_VENV -eq 1 -a $CREATE_VENV -eq 1 ]; then
             echo "Verifying $vsrc checksum is $vsha"
             python -c "import hashlib; assert hashlib.sha256(open('$vsrc', 'rb').read()).hexdigest() == '$vsha', '$vsrc: invalid checksum'"
             tar zxf $vsrc -C $vtmp
-            python $vtmp/virtualenv-$vvers/virtualenv.py "$GALAXY_VIRTUAL_ENV"
+            python $vtmp/virtualenv-$vvers/virtualenv.py -p "$(command -v python)" "$GALAXY_VIRTUAL_ENV"
             rm -rf $vtmp
         fi
     fi
